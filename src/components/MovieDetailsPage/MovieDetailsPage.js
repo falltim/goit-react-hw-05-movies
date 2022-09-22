@@ -1,4 +1,5 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
+import { useQuery } from 'react-query';
 import { movieById } from '../../services/films-api';
 import { useParams, useNavigate, Link, Routes, Route } from 'react-router-dom';
 import styles from './MovieDetailsPage.module.css';
@@ -8,16 +9,15 @@ const Reviews = lazy(() => import('../Reviews'));
 
 export default function MovieDetailsPage() {
   const { movieId } = useParams();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   function handleClick() {
     navigate(-1);
   }
 
-  const [movie, setMovie] = useState(null);
-  useEffect(() => {
-    movieById(movieId).then(setMovie);
-  }, [movieId]);
-  if (movie) {
+  const query = useQuery(['movies', movieId], () => movieById(movieId));
+
+  if (query.status === 'success') {
+    const movie = query.data;
     const {
       poster_path,
       genres,
