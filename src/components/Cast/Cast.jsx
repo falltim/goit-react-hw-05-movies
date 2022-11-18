@@ -1,34 +1,38 @@
-import { getCastMovies } from 'API/api-services';
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { CastItem } from './CastItem';
-import { List } from 'components/SharedLayout/SharedLayout.styled';
-//----------------------------------------------//
+import PropTypes from 'prop-types';
 
-export const Cast = () => {
-  const [movieCast, setMovieCast] = useState([]);
-  const { movieId } = useParams();
+import styles from './Cast.module.css';
 
-  useEffect(() => {
-    getCastMovies(movieId).then(data => {
-      setMovieCast(data.cast);
-    });
-  }, [movieId]);
+export const Cast = ({ cast }) => {
   return (
     <>
-      {movieCast && movieCast.length ? (
-        <List>
-          {movieCast.map(item => {
-            return (
-              <li key={item.id}>
-                <CastItem cast={item}></CastItem>
-              </li>
-            );
-          })}
-        </List>
-      ) : (
-        <p>No data</p>
-      )}
+      <div className={styles.list_section}>
+        <ul className={styles.list}>
+          {cast.map(({ id, original_name, profile_path }) => (
+            <li key={id} className={styles.item}>
+              <img
+                src={
+                  profile_path
+                    ? `https://image.tmdb.org/t/p/w300/${profile_path}`
+                    : 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png'
+                }
+                alt={original_name}
+                className={styles.item_image}
+              />
+              <p className={styles.item_name}>{original_name}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
+};
+
+Cast.propTypes = {
+  cast: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      original_name: PropTypes.string.isRequired,
+      profile_path: PropTypes.string,
+    }).isRequired
+  ),
 };
