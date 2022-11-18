@@ -1,13 +1,20 @@
-import { ResultsList } from 'components/ResultList/ResultList';
-import { Title } from 'components/ResultList/ResultList.styled';
+import { useEffect, useState } from 'react';
+import { FilmList } from 'components/FilmsList/FilmList';
+import { getPoPMovies } from 'API/api-services';
 
-const Home = ({ results }) => {
-  return (
-    <>
-      <Title>TRENDING TODAY</Title>
-      <ResultsList results={results} />
-    </>
-  );
-};
+export default function Home() {
+  const [popMovieList, setPopMovies] = useState([]);
+  // const isFirstLoad = useRef(true);
 
-export default Home;
+  useEffect(() => {
+    // if (isFirstLoad.current) {
+    //   isFirstLoad.current = false;
+    //   return;
+    // }
+    getPoPMovies().then(data => {
+      setPopMovies(data.results);
+    });
+  }, []);
+
+  return <FilmList filmList={popMovieList} />;
+}

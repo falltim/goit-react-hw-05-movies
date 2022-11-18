@@ -1,57 +1,40 @@
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 
+export const Container = styled.div`
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px;
+`;
 export const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 15px 30px;
-  background-color: black;
+  gap: 12px;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid black;
 
   > nav {
     display: flex;
-    justify-content: space-between;
-
-    &:hover {
-      & > *:not(:hover) {
-        opacity: 0.2;
-      }
-    }
   }
 `;
 
 export const Link = styled(NavLink)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 8px 16px;
   border-radius: 4px;
   text-decoration: none;
-  color: white;
+  color: black;
   font-weight: 500;
-  transition-duration: 200ms;
-  font-size: 21px;
-  margin: 5px;
-  box-shadow: 0px 0px 2px yellow;
 
   &.active {
-    background-color: yellow;
-    color: black;
-  }
-
-  &.active,
-  &:hover {
-    cursor: pointer;
-  }
-
-  &:hover:not(.active) {
     color: white;
-    background-color: red;
-    box-shadow: 0px 0px 2px red;
+    background-color: blue;
   }
 `;
 
-export const ErrorBox = styled.div`
-  background-color: black;
+export const List = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 `;

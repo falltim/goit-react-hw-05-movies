@@ -1,33 +1,69 @@
-import React, { lazy, Suspense } from 'react';
-import { QueryClientProvider, QueryClient } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { lazy, Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
+// import { Home } from 'pages/Home';
+import { SharedLayout } from './SharedLayout/SharedLayout ';
+// import { Searchbar } from './Searchbar/Searchbar';
+// import { MovieView } from 'pages/MovieView';
+import { Cast } from './Cast/Cast';
+import { Review } from './Review/Review';
+// import NotFound from 'pages/NotFound';
 
-import { Routes, Route } from 'react-router-dom';
-import Navigation from './Navigation';
+const NotFound = lazy(() => import('pages/NotFound'));
+const Searchbar = lazy(() => import('../pages/Searchbar'));
+const MovieView = lazy(() => import('pages/MovieView'));
+const Home = lazy(() => import('pages/Home'));
 
-const HomePage = lazy(()=> import('./HomePage'));
-const MoviesPage = lazy(() => import('./MoviesPage'));
-const MovieDetailsPage = lazy(()=> import('./MovieDetailsPage'));
-const Nothing = lazy(()=>import('./Nothihg'));
-
-const queryClient = new QueryClient();
-const App = () => {
-  
-  return (      
-    <QueryClientProvider client = { queryClient }>
-    <Suspense fallback={<h1>Loading</h1>}>
+//--------------------------------------------------------------//
+export const App = () => {
+  return (
+    <div>
       <Routes>
-        <Route path="/" element={<Navigation />}>  
-            <Route index element={<HomePage />} />        
-            <Route path="movies" element={<MoviesPage />} />
-            <Route path="movies/:movieId/*" element={<MovieDetailsPage />} />
-            <Route path='*' element={<Nothing />} />
-        </Route>    
+        <Route path="/goit-react-hw-05-movies/" element={<SharedLayout />}>
+          <Route
+            index
+            element={
+              <Suspense fallback={<h2>Loading ...</h2>}>
+                <Home />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/goit-react-hw-05-movies/movies"
+            element={
+              <Suspense fallback={<h2>Loading ...</h2>}>
+                <Searchbar />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/goit-react-hw-05-movies/movies/:movieId"
+            element={
+              <Suspense fallback={<h2>Loading ...</h2>}>
+                <MovieView />
+              </Suspense>
+            }
+          >
+            <Route path="cast" element={<Cast />} />
+            <Route path="reviews" element={<Review />} />
+          </Route>
+        </Route>
+
+        <Route
+          path="*"
+          element={
+            <Suspense fallback={<h2>Loading ...</h2>}>
+              <NotFound />
+            </Suspense>
+          }
+        />
       </Routes>
-    </Suspense>
-    <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>    
+    </div>
   );
 };
-
-export default App;
+/*
+'/' – компонент Home, домашня сторінка зі списком популярних кінофільмів.
+'/movies' – компонент Movies, сторінка пошуку кінофільмів за ключовим словом.
+'/movies/:movieId' – компонент MovieDetails, сторінка з детальною інформацією про кінофільм.
+/movies/:movieId/cast – компонент Cast, інформація про акторський склад. Рендериться на сторінці MovieDetails.
+/movies/:movieId/reviews – компонент Reviews, інформація про огляди. Рендериться на сторінці MovieDetails.
+*/
