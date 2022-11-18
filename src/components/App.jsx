@@ -1,40 +1,33 @@
-import { Route, Routes } from 'react-router-dom';
-import fetchResult from 'services/API';
-import { useState, useEffect } from 'react';
-import { lazy } from 'react';
-import { SharedLayout } from './SharedLayout/SharedLayout';
+import React, { lazy, Suspense } from 'react';
+import { QueryClientProvider, QueryClient } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
-const Container = lazy(() => import('./Container/Container'));
-const Home = lazy(() => import('../pages/Home'));
-const Movies = lazy(() => import('../pages/Movies'));
-const MovieDetails = lazy(() => import('../pages/MovieDetails'));
-const Cast = lazy(() => import('../pages/Cast'));
-const Reviews = lazy(() => import('../pages/Reviews'));
-const Error = lazy(() => import('../pages/Error'));
+import { Routes, Route } from 'react-router-dom';
+import Navigation from './Navigation';
 
-export const App = () => {
-  const [results, setResults] = useState([]);
+const HomePage = lazy(()=> import('./HomePage'));
+const MoviesPage = lazy(() => import('./MoviesPage'));
+const MovieDetailsPage = lazy(()=> import('./MovieDetailsPage'));
+const Nothing = lazy(()=>import('./Nothihg'));
 
-  useEffect(() => {
-    fetchResult().then(response => {
-      const results = response.map(movie => movie);
-      setResults(results);
-    });
-  }, []);
-
-  return (
-    <Container>
+const queryClient = new QueryClient();
+const App = () => {
+  
+  return (      
+    <QueryClientProvider client = { queryClient }>
+    <Suspense fallback={<h1>Loading</h1>}>
       <Routes>
-        <Route path="/" element={<SharedLayout />}>
-          <Route index element={<Home results={results} />} />
-          <Route path="movies" element={<Movies />} />
-          <Route path="movies/:movieId" element={<MovieDetails />}>
-            <Route path="cast" element={<Cast />} />
-            <Route path="reviews" element={<Reviews />} />
-          </Route>
-        </Route>
-        <Route path="*" element={<Error />} />
+        <Route path="/" element={<Navigation />}>  
+            <Route index element={<HomePage />} />        
+            <Route path="movies" element={<MoviesPage />} />
+            <Route path="movies/:movieId/*" element={<MovieDetailsPage />} />
+            <Route path='*' element={<Nothing />} />
+        </Route>    
       </Routes>
-    </Container>
+    </Suspense>
+    <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>    
   );
 };
+
+export default App;
